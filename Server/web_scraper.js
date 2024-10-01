@@ -3,6 +3,10 @@ const puppeteer = require('puppeteer')
 const fs = require('fs').promises;
 
 
+//add error handlers and work on efficiency
+//update github
+
+
 async function scrape(){
 
     //Create new browser
@@ -43,31 +47,73 @@ async function scrape(){
             //    return elements.map(x => x.href)
             //})
 
-            if (extra_links || extra_links.length > 0){
-                for (const extra_link in extra_links){
-                    recipe_links.push(extra_links)
+            if (extra_links.length > 0){
+                for (const extra_link of extra_links){
+                    recipe_links.push(extra_link)
                 }
             }
             else{
                 //get the recipe name
-                const name = await page.$eval('.article-header--recipe_1-0 > h1', el => el.innerText);
+                //WORK ON THIS//.type--lion
+
+                const nameElement = await page.$('h1.article-heading', el => el.innerText);
+                let name;
+                if (nameElement) {
+                    name = await page.$eval('h1.article-heading.type--lion', el => el.innerText);
+                }
+                else{
+                    console.warn(`Didn't find name of recipe at ${recipe_link}`);
+                    continue; //skip to next recipe
+                }
                 //get the list of ingredients
                 //document.querySelector("#article-header--recipe_1-0 > h1")
-                const ingredients = await page.$$eval('.mm-recipes-structured-ingredients_1-0 > ul > li:nth-child(1) > p > span:nth-child(3) ', (elements) => {
+                //$$eval.('li.mm-recipes-structured-ingredients__list-item > p.data-ingredient-name'
+                //const ingredients = await page.$$eval('.mm-recipes-structured-ingredients_1-0 > ul > li:nth-child(1) > p > span:nth-child(3) ', (elements) => {
+                //    return elements.map(x => x.innerText)
+                //});
+                const ingredients = await page.$$eval('li.mm-recipes-structured-ingredients__list-item > p > span[data-ingredient-name="true"]', (elements) => {
                     return elements.map(x => x.innerText)
-                    });
+                });
+
                 ingredient_list.set(name, ingredients);
-                }
- //if has more recipes in the link -> go to those
+                
+                //if has more recipes in the link -> go to those
         
-            //add the name and ingredients to the map
+                //add the name and ingredients to the map
+                
+                //const recipeJSON = {};
+                const recipeJSON = JSON.stringify(Object.fromEntries(ingredient_list))
+                //for (const [key, value] of ingredient_list){
+                //    recipeJSON[key] = value
+               // }
+                //const recipeJSON = JSON.stringify(ingredient_list);
+                //const nameJSON = JSON.stringify(name, )
+                //const ingredientsJSON = JSON.stringify(ingredients, null, 2)
+
+                try {
+                    await fs.appendFile("links.json", recipeJSON);
+                }
+                catch(err){
+                    //console.error("Error: ", err);
+                    console.warn(`Couldn't print to links.txt`)
+                    continue;
+                }
+            }
         }
+    
 
     }
 
-    for (const [key, value] of ingredient_list){
-        await fs.appendFile("links.txt", `${key}:  ${value.join(', ')}\n\r`);
+   /* try{
+        for (const [key, value] of ingredient_list){
+            await fs.appendFile("links.txt", `${key}:  ${value.join(', ')}\n\r`);
+        }
     }
+    catch(err){
+        //console.error("Error: ", err);
+        console.warn(`Couldn't print to links.txt`)
+        continue;
+    }*/
 
 
     await browser.close()
