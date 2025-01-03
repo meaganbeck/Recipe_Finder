@@ -1,0 +1,26 @@
+.Dropdown {
+    padding: 10px;
+}
+
+.ingredient-dropdown{
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.cuisine-dropdown{
+    position: relative;
+    top: 0;
+    left: 0;
+}
+.exclude-dropdown{
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.diet-dropdown{
+    position: relative;
+    top: 0;
+    left: 0;
+}

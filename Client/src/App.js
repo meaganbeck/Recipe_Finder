@@ -1,46 +1,68 @@
 import React, { useState, useEffect } from "react";
 import logo from './logo.svg';
 import './App.css';
+import './Dropdown.css';
 import Dropdown from "./Dropdown.js";
 
 
 function App() {
   const [message, setMessage] = useState("");
   const [data, setData] = useState("");
-  const [cuisine, setCuisine] = useState("");
-  const [ingredient, setIngredient] = useState("");
-  const [exclusion, setExclusion] = useState("");
+  //const [cuisine, setCuisine] = useState("");
+  //const [ingredient, setIngredient] = useState("");
+  //const [exclusion, setExclusion] = useState("");
+  //const [diet, setDiet] = useState("");
+  const [filters, setFilters] = useState({ingredient: '',
+                                        exclusion: '',
+                                        diet: ''});
 
-  //this creates a Get request that requests info
+
+/*  useEffect(() => {
+    fetchData();
+  }, []);
+  */
+//this creates a Get request that requests info
+//Can use URL variable as needed
   const fetchData = () => {
-    fetch('/api')
-    .then((res) => {
-      console.log('response received:', res);
-      return res.json();
-    })
+    fetch('http://localhost:4000/api/get-recipe-filtered', {
+      method: "GET",
+    }) //This is the api endpoint (my server)
     .then((response) => {
-      console.log("dataaaa", response);
-      setMessage(response.message);
-      setData(response.data);
+      if (!response.ok) {
+        throw new Error("Bad response");
+      }
+      console.log('response received:', response);
+      return response.json();
     })
-    console.log(data);
+    .then((data) => {
+      console.log("dataaaa", data);
+      //setMessage(data.message);
+      setData(data);
+    })
   }
 
   //Create a post request
   const sendData = async(data) => {
-    const response = await fetch("/api", {
+    const response = await fetch("http://localhost:4000/api/recipe-filters", {
       method: 'POST',
       headers: {
-        "Content-type": "application/json; charset=UTF-8"
+        //edit this header for the specific data i'm sending 
+        "Content-type": "application/json,"
       },
       body: JSON.stringify(data)
     })
-    .then((response) => response.json())
-    .then((json) => console.log(json));
+    .then(response => response.json())
+    .then(data => 
+      {console.log('Success:', data);
+      setMessage(data.response);
+      fetchData();
+    })
+    .catch(error => console.error('Error:', error));
   }
 
 
-  const handleIngredient = (value) => {
+  //const handleSubmit() could maybe join these all into one big
+ /* const handleIngredient = (value) => {
     setIngredient(value);
   }
   const handleCuisine = (value) => {
@@ -49,25 +71,47 @@ function App() {
   const handleExclusion = (value) => {
     setExclusion(value);
   }
+  const handleDiet = (value) => {
+    setDiet(value);
+  }*/
+  const handleFilters = (key, value) => {
+    setFilters(prevFilter => ({
+      ...prevFilter,
+      [key]:value,
+    }));
+  };
   
-  useEffect(() => {
-    fetchData();
-  }, []);
+
   
+
 
   //maybe read from files here
   const ingredients = ['Cheese', 'Meat', 'Vegetables'];
-  const cuisines = ['Mexican', 'Korean', 'Italian'];
-  const exclude = ['Dairy', 'Nuts', 'Vegetables'];
-
+  //const cuisines = ['Mexican', 'Korean', 'Italian'];
+  const exclude = ['Dairy', 'Eggs', 'Shellfish','Tree nuts','Peanuts', 'Wheat', 'Soybeans','Nuts', 'Vegetables','Sesame', 'Fish'];
+  const diets = ['Plant-Based','Vegan','Vegetarian']
   //pass food_data -> my combined ingredients and cuisines and limitations
-  //sendData(food_data)
+  //<button onClick = {() => sendData("wowza")}> Find Recipe </button>
   return (
+    
     <div>
-        <Dropdown elements = {ingredients} onSelect = {handleIngredient}/>
-        <Dropdown elements = {cuisines} onSelect = {handleCuisine}/>
-        <Dropdown elements = {exclusion} onSelect = {handleExclusion}/>
-        <button onClick = {() => sendData("wowza")}> Find Recipe </button>
+      <h1 class = "h1"> Find that Recipe! </h1>
+      <h2 class = "ingredient-header"> Ingredients
+        <div class= "ingredient-dropdown">
+          <Dropdown elements = {ingredients} onSelect ={(val) => handleFilters('ingredient', val)}/>
+        </div>
+      </h2>
+      <h2 class = "exclude-header"> Allergies/Exclusions
+        <div class = "exclude-dropdown">
+          <Dropdown elements = {exclude} onSelect = {(val) => handleFilters('exclusions', val)}/>
+        </div>
+      </h2>
+      <h2 class = "diet-header"> Special Diet
+        <div class = "diet-dropdown">
+          <Dropdown elements = {diets} onSelect = {(val) => handleFilters('diet', val)}/>
+        </div>
+      </h2>
+      <button onClick = {() => sendData(filters)}> Find Recipe </button>   
     </div>
   );
 }

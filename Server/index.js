@@ -1,35 +1,63 @@
+/*Index file for Server side*/
+
 const express = require("express");
+const mysql = require("mysql2");
 const app = express();
+
 const cors = require('cors');
 app.use(cors());
 app.use(express.json());
+const fs = require('fs').promises;
 
 const { scrape } = require('./web_scraper');
-
-let scraped_data = scrape(); 
-//this is all the links currently 
-
-//this is server side handling of a get request
-//change data type
+const { parse } = require('./parse_data');
+const { queryData } = require('./query_data');
 
 
-//this is the response to a get request? 
-app.get("/api", (req, res)=> {
-    res.json({data: "hello"});
-});
+/*Creates all queries I will need*/
+//FIXME via updating how this data is stored. Feels like an odd strategy.
 
-//this is the response to a post request
-app.post("/api", (req, res) => {
-    const {data} = req.body;
+const query_empty = 'SELECT * FROM ingredients;';
+const query_all = 'SELECT * FROM ingredients, recipes;';
 
-    res.json({success: true, response:"data received"});
-    console.log({data});
-});
+//Variable for parsed data. The final result after filters applied. 
+//FIXME likely change datatype
+let processedData = {};
 
-//{data: scraped_datastuffs}
+
+/*Query data to check if there is existing info in the database 
+* If there is none, scrape the data. Otherwise pull all from database*/
+if (queryData(query_empty) == null){
+    let scraped_data = scrape(); 
+}
+else{
+    scraped_data = queryData(query_all);  
+}
 
 const PORT = process.env.PORT || 4000;
 
+/*Response to GET request from Client */
+app.get("/api/get-recipe-filtered", (req, res)=> {
+
+    res.json({data: processedData});
+});
+
+/*Response to POST request from Cleint */
+app.post("/api/recipe-filters", (req, res) => {
+    /*Variable 'data' holds the sent information*/
+    const {data} = req.body;
+    const { ingredient, exclusion, diet } = req.body;
+  
+    //FIXME - call parse function that doesn't exist rn
+    processedData = parse(data);
+
+    //ALT: processedData = {ingredient, exclusion, diet, processed: true};
+
+    /*Sends a response to the client, confirming it received the information.*/
+    res.json({success: true, processedData: processedData, response:"data received"});
+    console.log({data});
+
+});
+
 
 app.listen(PORT, () => {console.log("server running port ${PORT}"); });
-

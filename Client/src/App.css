@@ -36,3 +36,26 @@
     transform: rotate(360deg);
   }
 }
+
+.h1{
+  text-align: center;
+}
+
+.ingredient-header{
+  text-align: center;
+  padding: 10px;
+}
+
+.cuisine-header{
+  text-align: center;
+  padding: 10px;
+
+}
+.exclude-header{
+  text-align: center;
+  padding: 10px;
+}
+.diet-header{
+  text-align: center;
+  padding: 10px;
+}

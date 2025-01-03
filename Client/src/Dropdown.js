@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 //import './App.css';
+import './Dropdown.css';
 
 //the dropdown values are the elements of the menu
 function Dropdown({elements, onSelect}) {
@@ -10,7 +11,7 @@ function Dropdown({elements, onSelect}) {
         onSelect(event.target.value);
     };
   return (
-    <select value={selected} onChange={handleChange}>
+    <select className="Dropdown" value={selected} onChange={handleChange}>
         {elements.map((option, index) => (
             <option key = {index} value ={option}> {option}</option>
         ))}
