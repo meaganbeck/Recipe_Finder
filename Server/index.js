@@ -34,6 +34,8 @@ else{
     scraped_data = queryData(query_all);  
 }
 
+//I now have all my data... in a map format? 
+
 const PORT = process.env.PORT || 4000;
 
 /*Response to GET request from Client */
@@ -46,18 +48,18 @@ app.get("/api/get-recipe-filtered", (req, res)=> {
 app.post("/api/recipe-filters", (req, res) => {
     /*Variable 'data' holds the sent information*/
     const {data} = req.body;
+    console.log(data);
     const { ingredient, exclusion, diet } = req.body;
   
     //FIXME - call parse function that doesn't exist rn
     processedData = parse(data);
 
     //ALT: processedData = {ingredient, exclusion, diet, processed: true};
-
+    console.log({processedData});
     /*Sends a response to the client, confirming it received the information.*/
     res.json({success: true, processedData: processedData, response:"data received"});
-    console.log({data});
 
 });
 
 
-app.listen(PORT, () => {console.log("server running port ${PORT}"); });
+app.listen(PORT, () => {console.log(`server running port ${PORT}`); });

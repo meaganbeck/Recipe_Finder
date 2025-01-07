@@ -51,7 +51,16 @@ function App() {
       },
       body: JSON.stringify(data)
     })
-    .then(response => response.json())
+    //failing to run response as a json. caust HTML?
+    .then(response => {
+      if (response.headers.get('content-type').includes('application/json')){
+        return response.json();
+      }
+      else {
+        throw new Error('Unexpected response format');
+      }
+      
+    })
     .then(data => 
       {console.log('Success:', data);
       setMessage(data.response);
@@ -111,9 +120,13 @@ function App() {
           <Dropdown elements = {diets} onSelect = {(val) => handleFilters('diet', val)}/>
         </div>
       </h2>
-      <button onClick = {() => sendData(filters)}> Find Recipe </button>   
+      <button onClick = {() => sendData(filters)}> Find Recipe </button> 
+      
     </div>
+    
   );
 }
 
 export default App;
+
+//{() => sendData(filters)}

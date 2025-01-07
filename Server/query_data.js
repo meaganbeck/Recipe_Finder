@@ -33,7 +33,7 @@ async function queryData(sqlQuery, data){
             }
             console.log('results: ', results);
             return results;
-           //How are results returned?
+           //How are results returned???
 });
 };
 
