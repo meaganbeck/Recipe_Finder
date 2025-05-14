@@ -47,7 +47,7 @@ function App() {
       method: 'POST',
       headers: {
         //edit this header for the specific data i'm sending 
-        "Content-type": "application/json,"
+        "Content-type": "application/json"
       },
       body: JSON.stringify(data)
     })

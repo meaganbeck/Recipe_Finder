@@ -17,9 +17,9 @@ const { queryData } = require('./query_data');
 /*Creates all queries I will need*/
 //FIXME via updating how this data is stored. Feels like an odd strategy.
 
-const query_empty = 'SELECT * FROM ingredients;';
+const query_empty = 'SELECT * FROM ingredients;'; //query if the data is empty
 const query_all = 'SELECT * FROM ingredients, recipes;';
-
+const setupTables = "";
 //Variable for parsed data. The final result after filters applied. 
 //FIXME likely change datatype
 let processedData = {};
@@ -27,6 +27,8 @@ let processedData = {};
 
 /*Query data to check if there is existing info in the database 
 * If there is none, scrape the data. Otherwise pull all from database*/
+
+
 if (queryData(query_empty) == null){
     let scraped_data = scrape(); 
 }

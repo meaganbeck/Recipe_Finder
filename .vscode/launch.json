@@ -6,6 +6,7 @@
     //Launch client after server success
     "version": "0.2.0",
     "configurations": [
+    
 
         {
             "type": "node",

@@ -86,9 +86,10 @@ async function scrape(){
                 /*FIXME this doesn't allow for the name to be cleaned*/
 
                 /**Create sql queries to store recipes into database */
-                const query_store_recipe = 'INSERT INTO recipes (name) WHERE name = ?;';
-                const query_store_ing = 'INSERT INTO ingredients (ingredient) WHERE ingredients = ? AND recipe_id = ?;';
+                const query_store_recipe = 'INSERT INTO recipes (name) VALUES (?);';
+                const query_store_ing = 'INSERT INTO ingredients (ingredient, recipe_id) VALUES (?, ?);';
                 
+
                 //FIXME wont handle errors well
                 /**Call queries. Store recipe name in 'recipes' table. Store ingredients in 
                  * 'ingredient table, with recipeID to refer to. 

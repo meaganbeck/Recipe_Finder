@@ -29,11 +29,12 @@ async function queryData(sqlQuery, data){
         connection.query(sqlQuery, data, (err,results) => {
              if(err) {
                 console.error("Query failed:" , err);
-                return;
+                return callback(null, null);
             }
-            console.log('results: ', results);
-            return results;
-           //How are results returned???
+            else{
+                //console.log('results: ', results);
+                callback(null, results);
+            }
 });
 };
 
