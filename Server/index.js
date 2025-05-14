@@ -40,7 +40,7 @@ const PORT = process.env.PORT || 4000;
 
 /*Response to GET request from Client */
 app.get("/api/get-recipe-filtered", (req, res)=> {
-
+    //Maybe correct type
     res.json({data: processedData});
 });
 
@@ -51,13 +51,12 @@ app.post("/api/recipe-filters", (req, res) => {
     console.log(data);
     const { ingredient, exclusion, diet } = req.body;
   
-    //FIXME - call parse function that doesn't exist rn
     processedData = parse(data);
 
     //ALT: processedData = {ingredient, exclusion, diet, processed: true};
     console.log({processedData});
     /*Sends a response to the client, confirming it received the information.*/
-    res.json({success: true, processedData: processedData, response:"data received"});
+    res.json({success: true, response:"data received"});
 
 });
 

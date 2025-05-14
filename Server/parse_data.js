@@ -1,9 +1,7 @@
 /*Uses the scraped data and the filters requested from client, to select the recipes to 
 return. 
 */
-
-import { queryData } from "./query_data";
-
+const { queryData } = require ('./query_data');
 
 async function parse(filters){
    // const sqlIngredient = filters[ingredient];//??
@@ -42,3 +40,7 @@ async function parse(filters){
  //do some sql nonesense
 
 }
+
+module.exports = {
+   parse
+};

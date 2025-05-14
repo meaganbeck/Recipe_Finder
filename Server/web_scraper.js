@@ -33,6 +33,8 @@ async function scrape(){
 
     const recipeID = 0;
     const ingredient_list = new Map(); 
+    const clean_data = new Map();
+    
 
     /*Loop through list of recipe categories*/
     for (const link of links){
@@ -75,21 +77,27 @@ async function scrape(){
                     return elements.map(x => x.innerText)
                 });
 
-                /*Add the ingredients to the Map of ingredients*/
+               // let cleaned_ingredients = new Map();
                 ingredient_list.set(name, ingredients);
-
+                //Clean data reurns as a map, overwritten each time
+                clean_data = clean(ingredient_list);
+               
+                /*Add the ingredients to the Map of ingredients*/
+                /*FIXME this doesn't allow for the name to be cleaned*/
 
                 /**Create sql queries to store recipes into database */
                 const query_store_recipe = 'INSERT INTO recipes (name) WHERE name = ?;';
                 const query_store_ing = 'INSERT INTO ingredients (ingredient) WHERE ingredients = ? AND recipe_id = ?;';
                 
+                //FIXME wont handle errors well
                 /**Call queries. Store recipe name in 'recipes' table. Store ingredients in 
                  * 'ingredient table, with recipeID to refer to. 
                  */
                 queryData(query_store_recipe, name);
-                for (ing in ingredients){
+                for (ing in clean_data.get(name)){
                     queryData(query_store_ing, [ing, recipeID]);
                 }
+
                 /**Increment recipeID (I forgot to Autoincrement recipeID in table creation) */
                 recipeID++;
             }
@@ -98,14 +106,9 @@ async function scrape(){
 
     }
     //CLEAN directly from here 
-  //  let cleaned_ingredients = clean(ingredient_list)
     await browser.close()
 
-
-    //Clean the data. 
-    //TODO: maybe clean and then store? maybe call clean for each recipe??
-    clean(ingredient_list);
-    return ingredient_list; //ingredient_list is a Map object
+    //return ingredient_list; //ingredient_list is a Map object
 
 }
 
